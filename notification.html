@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <style>
+        .notif-item {
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+        .unread {
+        background-color: #eef5ff; /* light blue */
+        border-left: 4px solid #0d6efd;
+        }
+        .read {
+        background-color: #f8f9fa; /* light gray */
+        border-left: 4px solid #ced4da;
+        color: #6c757d;
+        }
+        .notif-title {
+        font-weight: bold;
+        margin: 0;
+        }
+        .notif-meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+        }
+        .id-bubble {
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        padding: 3px 8px;
+        font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+    <div class="container py-4">
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="mb-0">Notifications</h4>
+            <span id="unreadBadge" class="badge text-bg-secondary ms-3">0</span>
+        </div>
+
+        <div id="notifList"></div>
+    </div>
+
+    <script>
+        const notifications = [
+            { id: 1, title: 'Account Activation Notice', body: "erteyewcf3vybu5n6bry", readstate: false },
+            { id: 2, title: 'Account Activation Notice', body: "erteyewcf3vybu5n6bry", readstate: true  },
+            { id: 3, title: 'Account Activation Notice', body: "erteyewcf3vybu5n6bry", readstate: false },
+            { id: 4, title: 'Password Reset Required', body: "Your password needs to be updated", readstate: false },
+            { id: 5, title: 'New Login Detected', body: "Login from new device detected", readstate: true },
+            { id: 6, title: 'Payment Received', body: "You've received $150.00 payment", readstate: false },
+            { id: 7, title: 'Subscription Renewal', body: "Your premium subscription will renew soon", readstate: false },
+            { id: 8, title: 'Profile Update Required', body: "Please complete your profile information", readstate: true },
+            { id: 9, title: 'Security Alert', body: "Unusual activity detected on your account", readstate: false },
+            { id: 10, title: 'Friend Request', body: "John Doe sent you a friend request", readstate: false },
+            { id: 11, title: 'Message Received', body: "You have 3 new messages", readstate: true },
+            { id: 12, title: 'Event Reminder', body: "Team meeting in 15 minutes", readstate: false },
+            { id: 13, title: 'Document Approved', body: "Your submission has been approved", readstate: false },
+            { id: 14, title: 'New Feature Available', body: "Check out our latest update", readstate: true },
+            { id: 15, title: 'Order Shipped', body: "Your order #12345 has been shipped", readstate: false },
+            { id: 16, title: 'Survey Request', body: "Help us improve by taking this survey", readstate: false },
+            { id: 17, title: 'Account Verification', body: "Please verify your email address", readstate: true },
+            { id: 18, title: 'Low Balance Alert', body: "Your account balance is below threshold", readstate: false },
+            { id: 19, title: 'New Connection', body: "You have 5 new connection requests", readstate: false },
+            { id: 20, title: 'System Maintenance', body: "Scheduled maintenance tonight at 2AM", readstate: true },
+            { id: 21, title: 'New Comment', body: "Someone commented on your post", readstate: false },
+            { id: 22, title: 'Achievement Unlocked', body: "You've earned the 'Super User' badge", readstate: false },
+            { id: 23, title: 'Deadline Approaching', body: "Project submission due in 2 days", readstate: true },
+            { id: 24, title: 'New Follower', body: "You have a new follower", readstate: false },
+            { id: 25, title: 'Password Changed', body: "Your password was successfully changed", readstate: false },
+            { id: 26, title: 'Backup Completed', body: "Your data backup is complete", readstate: true },
+            { id: 27, title: 'New Assignment', body: "You've been assigned a new task", readstate: false },
+            { id: 28, title: 'Service Outage', body: "Some services may be temporarily unavailable", readstate: false },
+            { id: 29, title: 'Review Request', body: "How would you rate your experience?", readstate: true },
+            { id: 30, title: 'Upgrade Available', body: "Upgrade to premium for more features", readstate: false },
+            { id: 31, title: 'New Product Alert', body: "Check out our newest product line", readstate: false },
+            { id: 32, title: 'Appointment Confirmed', body: "Your appointment is confirmed for tomorrow", readstate: true },
+            { id: 33, title: 'Billing Statement', body: "Your monthly statement is ready", readstate: false }
+        ];
+
+        const listEl = document.getElementById('notifList');// noti show
+        const unreadBadge = document.getElementById('unreadBadge');
+
+        function renderNotifications() {
+            listEl.innerHTML = '';
+            let unreadCount = 0;
+
+            notifications.forEach(n => {
+            if (!n.readstate) unreadCount++;
+
+            
+            const item = document.createElement('div');
+            item.className = `notif-item ${n.readstate ? 'read' : 'unread'}`;
+
+            item.innerHTML = `
+                <div>
+                    <p class="notif-title">${n.title}</p>
+                    <span class="notif-meta">${n.readstate ? 'Read' : 'Unread'}</span>
+                </div>
+                <span class="id-bubble">#${n.id}</span>
+            `;
+            listEl.appendChild(item);
+            });
+
+            unreadBadge.textContent = unreadCount;
+        }
+
+        renderNotifications();
+    </script>
+
+</body>
+</html>
